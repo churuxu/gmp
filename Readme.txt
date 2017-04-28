@@ -1,4 +1,4 @@
-Generator My Project
+Generate My Project
 
 tool for generator project from template files.
 
