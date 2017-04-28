@@ -1,0 +1,5 @@
+{
+"target":"test",
+"srcdirs":["src"],
+"includes":["src/foo","src/bar"]
+}
