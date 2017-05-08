@@ -36,7 +36,7 @@ for(i in gmp.srcs){
 
 CFLAGS += -Wall -O2 ##{
 for(i in gmp.includes){    
-	out = out + " -I" + gmp.includes[i];	
+	out = out + " -I../" + gmp.includes[i];	
 }
 }##  ##{
 for(i in gmp.defines){    
