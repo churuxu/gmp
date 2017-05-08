@@ -1,18 +1,58 @@
 
 ifndef TARGET
-	TARGET = ##{gmp.target}##.a
+##{ 
+if(gmp.type == "shared"){
+    out = "TARGET = " + gmp.target + ".so";
+	gmp.ldcmd = "$(CXX) -o";
+}else if(gmp.type == "static"){
+    out = "TARGET = " + gmp.target + ".a";
+	gmp.ldcmd = "$(AR) -rc";
+}else{  
+    out = "TARGET = " + gmp.target;
+	gmp.ldcmd = "$(CXX) -o";
+}
+}##
 endif
 
 SRCS = ##{ 
 for(i in gmp.srcs){
-    out = out + " \\\n../" + gmp.srcs[i];
+    var file = gmp.srcs[i];
+    var extindex = file.lastIndexOf(".");
+	if(extindex >= 0 && file.substr(extindex) == ".c"){
+		out = out + " \\\n../" + file;
+	}
 } 
 }##
 
+SRCSCPP = ##{ 
+for(i in gmp.srcs){
+    var file = gmp.srcs[i];
+    var extindex = file.lastIndexOf(".");
+	if(!(extindex >= 0 && file.substr(extindex) == ".c")){
+		out = out + " \\\n../" + file;
+	}
+} 
+}##
 
-CFLAGS += -Wall -O2 
-CPPFLAGS = $(CFLAGS) 
-
+CFLAGS += -Wall -O2 ##{
+for(i in gmp.includes){    
+	out = out + " -I" + gmp.includes[i];	
+}
+}##  ##{
+for(i in gmp.defines){    
+	out = out + " -D" + gmp.defines[i];	
+}
+}## ##{
+for(i in gmp.cflags){    
+	out = out + " " + gmp.cflags[i];	
+}
+}## 
+CPPFLAGS += $(CFLAGS) 
+LDFLAGS += ##{
+for(i in gmp.ldflags){    
+	out = out + " " + gmp.ldflags[i];	
+}
+}## 
 
 #========== do not modify below ==========
 TARGETDIR = target/default
@@ -25,20 +65,27 @@ OBJDIR = $(TARGETDIR)/obj
 OBJSTMP = $(foreach n, $(SRCS), $(subst /,++,$(n)).obj )
 OBJS = $(foreach n, $(OBJSTMP), $(OBJDIR)/$(n) )
 
-$(TARGETDIR)/$(TARGET): $(OBJDIR) $(OBJS)
-	$(AR) -rc $(TARGETDIR)/$(TARGET) $(OBJS)
+OBJSTMPCPP = $(foreach n, $(SRCSCPP), $(subst /,++,$(n)).objx )
+OBJSCPP = $(foreach n, $(OBJSTMPCPP), $(OBJDIR)/$(n) )
+
+$(TARGETDIR)/$(TARGET): $(OBJDIR) $(OBJS) $(OBJSCPP)
+	##{gmp.ldcmd}##  $(TARGETDIR)/$(TARGET) $(LDFLAGS) $(OBJS) $(OBJSCPP)
 
 %.obj: SRC = $(basename $(subst ++,/, $(subst $(OBJDIR)/,,$@) ) )
 %.obj: $(SRC)	
-	$(CXX) -c $(SRC) -o $@ $(CPPFLAGS) -MMD
+	$(CC) -c $(SRC) -o $@ $(CFLAGS) -MMD
 
-%.d: %.obj
+%.objx: SRCCPP = $(basename $(subst ++,/, $(subst $(OBJDIR)/,,$@) ) )
+%.objx: $(SRCCPP)	
+	$(CXX) -c $(SRCCPP) -o $@ $(CPPFLAGS) -MMD	
+	
 
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 clean:
-	rm -f $(OBJS) $(TARGET) ${OBJS:.obj=.d}
+	rm -f $(OBJS) $(OBJSCPP) $(TARGET) ${OBJS:.obj=.d} ${OBJSCPP:.objx=.d}
 
 -include ${OBJS:.obj=.d}
+-include ${OBJSCPP:.objx=.d}
 
