@@ -2,6 +2,9 @@
 
 通过模板文件生成项目文件的工具
 
+默认模板目录中带了Makefile, vs2015, Android.mk, xcode(ios)等项目模板，
+你也可以自己创建自己的模板。 
+
 
 安装说明：
   安装nodejs，添加nodejs所在目录到PATH环境变量
@@ -9,10 +12,11 @@
 
 
 使用说明：
-  gmp <template>
+  gmp <template> [tag]
     template参数可以是模板文件所在目录，例如：gmp ../MyTemplates/vs2010
     或者gmp/template下的目录， 例如：gmp vs2015
-  
+    tag参数一般表示平台名称，用于从BUILD.gmp加载tag节点特殊指定的参数
+
 
 gmp生成项目文件流程:
   1. 如果当前目录下存在BUILD.gmp，则加载该文件中的参数，否则使用默认的参数

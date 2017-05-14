@@ -1,5 +1,15 @@
 {
 "target":"test",
 "srcdirs":["src"],
-"includes":["src/foo","src/bar"]
+"includes":["src/foo","src/bar"],
+"defines":["COMMOM_DEF"],
+
+"win32":{
+    "defines":["WIN32_DEF"]
+},
+
+"apple":{
+    "srcext":".c .cpp .m .mm"
+}
+
 }

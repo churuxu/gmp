@@ -33,11 +33,12 @@ const sign2 = "}##";
 var template = ""
 var verbose = false;
 var gmpdir = "";
-
+var tag = "";
 // process command line
 process.argv.forEach((val, index, array) => {    
     if(index == 1)gmpdir = path.dirname(val);
-    if(index == 2)template = val;    
+    if(index == 2)template = val;
+    if(index == 3)tag = val;
 });
 
 //load utility functions
@@ -54,7 +55,7 @@ var config = JSON.parse(configstr);
 var gmp = config;
 
 if (template == "") {
-    console.log("usage: gmp <project_template>");
+    console.log("usage: gmp <project_template> [tag]");
     return;    
 }
 
@@ -143,7 +144,11 @@ function evalConfigs(){
     if(!gmp.srcdirs){
         gmp.srcdirs=["."];
     }
-    
+
+	if(tag.length && gmp[tag]){
+		mergerObject(gmp, gmp[tag]);	
+	}  
+  
     if(!gmp.srcs){
         gmp.srcs = new Array();
         for(var i=0;i<gmp.srcdirs.length;i++){
@@ -157,7 +162,7 @@ function evalConfigs(){
             pushFilesToArray(gmp.headers, gmp.srcdirs[i], gmp.headerext,  null);
         }
     }
-        
+    
 
     if(gmp.exludes){ 
         exludeByNameFromArray(gmp.srcs, gmp.exludes);
