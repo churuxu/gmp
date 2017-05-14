@@ -68,7 +68,7 @@ OBJSTMPCPP = $(foreach n, $(SRCSCPP), $(subst /,-,$(n)).objx )
 OBJSCPP = $(foreach n, $(OBJSTMPCPP), $(OBJDIR)/$(n) )
 
 $(TARGET): $(OBJDIR) $(OBJS) $(OBJSCPP)
-	##{gmp.ldcmd}##  $(TARGET) $(LDFLAGS) $(OBJS) $(OBJSCPP)
+	##{gmp.ldcmd}##  $(TARGET) $(OBJS) $(OBJSCPP) $(LDFLAGS)
 
 %.obj: SRC = $(basename $(subst -,/, $(subst $(OBJDIR)/,,$@) ) )
 %.obj: $(SRC)	
