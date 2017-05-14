@@ -55,27 +55,26 @@ for(i in gmp.ldflags){
 }## 
 
 #========== do not modify below ==========
-TARGETDIR = target/default
+OBJDIR = objs/default
 ifdef ARCH
 	CFLAGS += -arch $(ARCH)	
-	TARGETDIR = target/$(ARCH)
+	OBJDIR = objs/$(ARCH)
 endif
-OBJDIR = $(TARGETDIR)/obj
 
-OBJSTMP = $(foreach n, $(SRCS), $(subst /,++,$(n)).obj )
+OBJSTMP = $(foreach n, $(SRCS), $(subst /,-,$(n)).obj )
 OBJS = $(foreach n, $(OBJSTMP), $(OBJDIR)/$(n) )
 
-OBJSTMPCPP = $(foreach n, $(SRCSCPP), $(subst /,++,$(n)).objx )
+OBJSTMPCPP = $(foreach n, $(SRCSCPP), $(subst /,-,$(n)).objx )
 OBJSCPP = $(foreach n, $(OBJSTMPCPP), $(OBJDIR)/$(n) )
 
-$(TARGETDIR)/$(TARGET): $(OBJDIR) $(OBJS) $(OBJSCPP)
-	##{gmp.ldcmd}##  $(TARGETDIR)/$(TARGET) $(LDFLAGS) $(OBJS) $(OBJSCPP)
+$(TARGET): $(OBJDIR) $(OBJS) $(OBJSCPP)
+	##{gmp.ldcmd}##  $(TARGET) $(LDFLAGS) $(OBJS) $(OBJSCPP)
 
-%.obj: SRC = $(basename $(subst ++,/, $(subst $(OBJDIR)/,,$@) ) )
+%.obj: SRC = $(basename $(subst -,/, $(subst $(OBJDIR)/,,$@) ) )
 %.obj: $(SRC)	
 	$(CC) -c $(SRC) -o $@ $(CFLAGS) -MMD
 
-%.objx: SRCCPP = $(basename $(subst ++,/, $(subst $(OBJDIR)/,,$@) ) )
+%.objx: SRCCPP = $(basename $(subst -,/, $(subst $(OBJDIR)/,,$@) ) )
 %.objx: $(SRCCPP)	
 	$(CXX) -c $(SRCCPP) -o $@ $(CPPFLAGS) -MMD	
 	
@@ -84,8 +83,9 @@ $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
 clean:
-	rm -f $(OBJS) $(OBJSCPP) $(TARGET) ${OBJS:.obj=.d} ${OBJSCPP:.objx=.d}
-
+	rm -f $(TARGET) 
+	rm -fr $(OBJDIR) 
+	
 -include ${OBJS:.obj=.d}
 -include ${OBJSCPP:.objx=.d}
 
