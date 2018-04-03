@@ -134,7 +134,7 @@ function evalConfigs(){
         gmp.uuid = util.uuid(gmp.target);
     }            
     if(!gmp.srcext){
-        gmp.srcext=".c .cpp";
+        gmp.srcext=".c .cpp .cc";
     }    
     
     if(!gmp.headerext){
