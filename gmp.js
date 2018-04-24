@@ -153,7 +153,7 @@ function evalConfigs(){
     }    
     
     if(!gmp.headerext){
-        gmp.headerext=".h";
+        gmp.headerext=".h .hpp";
     }
     
     if(!gmp.srcdirs){
