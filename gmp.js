@@ -23,7 +23,7 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-
+const child_process = require('child_process');
 
 
 const buildfile = "BUILD.gmp";
@@ -115,6 +115,21 @@ function exludeByNameFromArray(filelist, namelist){
             i++;
         }
     }
+}
+
+function getTargetName(dir){
+	var target = null;
+	try{
+		var data = fs.readFileSync(dir + "/BUILD.gmp");
+		var obj = JSON.parse(data);
+		target = obj.target;
+	}catch(e){
+		
+	}
+	if(!target){
+		target = path.basename(dir);
+	}
+	return target;
 }
 
 function evalConfigs(){    
@@ -241,11 +256,30 @@ function processDir(dir, to){
 	});
 }
 
+function processDepends(){
+	if(!gmp.depends){
+		return ;
+	}
+	
+	for(var i=0;i<gmp.depends.length;i++){
+		var dependdir = gmp.depends[i];
+		var cmd = "gmp " + template + " " + tag;		
+		var opt = {};
+		opt.cwd = dependdir;
+		opt.stdio = "inherit";
+		
+		console.log("generate depends " + dependdir + " ...");
+		child_process.execSync(cmd, opt);
+	}
+}
+
 
 evalConfigs();
 var templateto = path.basename(template);
 var templatedir = path.join(gmpdir, "template", template);
 if(templateto != template && fs.existsSync(template))templatedir = template;
+
+processDepends();
 
 console.log(templatedir);
 console.log(gmp);

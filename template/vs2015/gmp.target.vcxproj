@@ -19,7 +19,18 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-
+  <ItemGroup>
+##{ 
+for(i in gmp.depends){
+	var depend = gmp.depends[i];
+	var name = getTargetName(depend);
+	var guid = util.guid(name);
+    out += '    <ProjectReference Include="../'+ depend +'/vs2015/'+ name +'.vcxproj">\n';
+	out += '      <Project>'+guid+'</Project>\n';
+	out += '    </ProjectReference>\n';
+} 
+}##		
+  </ItemGroup>
   <ItemGroup>  
 ##{ 
 if(gmp.rcfile){

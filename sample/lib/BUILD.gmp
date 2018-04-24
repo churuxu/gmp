@@ -1,0 +1,15 @@
+{
+"target":"libtest",
+"type":"static",
+"srcdirs":["."],
+
+
+"win32":{
+    "defines":["WIN32_DEF"]
+},
+
+"apple":{
+    "srcext":".c .cpp .m .mm"
+}
+
+}

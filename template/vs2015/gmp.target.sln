@@ -5,6 +5,16 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "##{gmp.target}##", "##{gmp.target}##.vcxproj", "##{gmp.guid}##"
 EndProject
+
+##{
+for(i in gmp.depends){
+	var depend = gmp.depends[i];
+	var name = getTargetName(depend);
+    out += 'Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "'+name+'", "../'+ depend + '/vs2015/'+  name+'.vcxproj", "'+util.guid(name)+'"\r\n';
+	out += 'EndProject\r\n'
+}
+}##
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +31,23 @@ Global
 		##{gmp.guid}##.Release|Win32.Build.0 = Release|Win32
 		##{gmp.guid}##.Release|x64.ActiveCfg = Release|x64
 		##{gmp.guid}##.Release|x64.Build.0 = Release|x64
+		
+##{
+for(i in gmp.depends){
+	var depend = gmp.depends[i];
+	var name = getTargetName(depend);
+	var guid = util.guid(name);
+    out += '\t\t' +guid+ '.Debug|Win32.ActiveCfg = Debug|Win32\r\n';
+	out += '\t\t' +guid+ '.Debug|Win32.Build.0 = Debug|Win32\r\n';
+	out += '\t\t' +guid+ '.Debug|x64.ActiveCfg = Debug|x64\r\n';
+	out += '\t\t' +guid+ '.Debug|x64.Build.0 = Debug|x64\r\n';
+	out += '\t\t' +guid+ '.Release|Win32.ActiveCfg = Release|Win32\r\n';
+	out += '\t\t' +guid+ '.Release|Win32.Build.0 = Release|Win32\r\n';
+	out += '\t\t' +guid+ '.Release|x64.ActiveCfg = Release|x64\r\n';
+	out += '\t\t' +guid+ '.Release|x64.Build.0 = Release|x64\r\n';
+}
+}##
+		
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
