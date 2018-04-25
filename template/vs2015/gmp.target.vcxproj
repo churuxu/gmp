@@ -129,9 +129,9 @@ for(i in gmp.libdirs){
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
 ##{	
-	if(gmp.precomplie){
+	if(gmp.precompile){
 		out += '      <PrecompiledHeader>Use</PrecompiledHeader>\n';
-		out += '      <PrecompiledHeaderFile>'+gmp.precomplie+'</PrecompiledHeaderFile>\n';
+		out += '      <PrecompiledHeaderFile>'+gmp.precompile+'</PrecompiledHeaderFile>\n';
 		out += '      <PrecompiledHeaderOutputFile>$(IntDir)\$(TargetName).pch</PrecompiledHeaderOutputFile>\n';
 	
 	}else{
@@ -161,9 +161,9 @@ for(i in gmp.libs){
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
 ##{	
-	if(gmp.precomplie){
+	if(gmp.precompile){
 		out += '      <PrecompiledHeader>Use</PrecompiledHeader>\n';
-		out += '      <PrecompiledHeaderFile>'+gmp.precomplie+'</PrecompiledHeaderFile>\n';
+		out += '      <PrecompiledHeaderFile>'+gmp.precompile+'</PrecompiledHeaderFile>\n';
 		out += '      <PrecompiledHeaderOutputFile>$(IntDir)\$(TargetName).pch</PrecompiledHeaderOutputFile>\n';
 	
 	}else{

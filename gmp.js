@@ -182,6 +182,11 @@ function evalConfigs(){
     if(gmp.exludes){ 
         exludeByNameFromArray(gmp.srcs, gmp.exludes);
     }
+	
+	if(gmp.precompile){
+		if(!gmp.defines)gmp.defines = new Array();
+		gmp.defines.push("PRECOMPILE_HEADER=" + gmp.precompile);
+	}
 }
 
 
