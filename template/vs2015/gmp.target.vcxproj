@@ -41,7 +41,15 @@ if(gmp.rcfile){
   <ItemGroup>
 ##{ 
 for(i in gmp.srcs){
-    out += '    <ClCompile Include=\"../' + gmp.srcs[i] + '\" />\n';
+	var file = gmp.srcs[i];
+	var name = path.basename(file);
+	if(name == "stdafx.cpp" || name == "pch.cpp"){
+		out += '    <ClCompile Include=\"../' + gmp.srcs[i] + '\" >\n';
+		out += '       <PrecompiledHeader >Create</PrecompiledHeader>\n';
+      	out += '    </ClCompile>\n';
+	}else{
+		out += '    <ClCompile Include=\"../' + gmp.srcs[i] + '\" />\n';
+	}
 } 
 }##
   </ItemGroup>
@@ -120,7 +128,16 @@ for(i in gmp.libdirs){
   
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+##{	
+	if(gmp.precomplie){
+		out += '      <PrecompiledHeader>Use</PrecompiledHeader>\n';
+		out += '      <PrecompiledHeaderFile>'+gmp.precomplie+'</PrecompiledHeaderFile>\n';
+		out += '      <PrecompiledHeaderOutputFile>$(IntDir)\$(TargetName).pch</PrecompiledHeaderOutputFile>\n';
+	
+	}else{
+		out += '      <PrecompiledHeader>NotUsing</PrecompiledHeader>\n';
+	}      
+}##
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -143,7 +160,16 @@ for(i in gmp.libs){
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+##{	
+	if(gmp.precomplie){
+		out += '      <PrecompiledHeader>Use</PrecompiledHeader>\n';
+		out += '      <PrecompiledHeaderFile>'+gmp.precomplie+'</PrecompiledHeaderFile>\n';
+		out += '      <PrecompiledHeaderOutputFile>$(IntDir)\$(TargetName).pch</PrecompiledHeaderOutputFile>\n';
+	
+	}else{
+		out += '      <PrecompiledHeader>NotUsing</PrecompiledHeader>\n';
+	}      
+}##
 	  <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
