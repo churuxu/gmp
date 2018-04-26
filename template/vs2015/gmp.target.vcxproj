@@ -1,6 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+##{
+	for(i in gmp.nuget){
+		var pack = gmp.nuget[i];
+		var arr = pack.split(" ");
+		var id = arr[0];
+		var version = arr[1];
+		var proppath = "$(SolutionDir)\\packages\\"+id+"."+version+"\\build\\native\\"+id+".props";
+		var targetpath = "$(SolutionDir)\\packages\\"+id+"."+version+"\\build\\native\\"+id+".targets";
+		
+		out +=  `<Import Project="${proppath}" Condition="Exists('${proppath}')" />\n`;
+
+	}
+}##
+
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -170,7 +184,7 @@ for(i in gmp.libs){
 		out += '      <PrecompiledHeader>NotUsing</PrecompiledHeader>\n';
 	}      
 }##
-	  <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+	 
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -194,5 +208,38 @@ for(i in gmp.libs){
     
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+##{
+	for(i in gmp.nuget){
+		var pack = gmp.nuget[i];
+		var arr = pack.split(" ");
+		var id = arr[0];
+		var version = arr[1];
+		var proppath = "$(SolutionDir)\\packages\\"+id+"."+version+"\\build\\native\\"+id+".props";
+		var targetpath = "$(SolutionDir)\\packages\\"+id+"."+version+"\\build\\native\\"+id+".targets";		
+		
+		out +=  `    <Import Project="${targetpath}" Condition="Exists('${targetpath}')" />\n`;
+
+	}
+}##
   </ImportGroup>
+  
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>please install nuget package: {0}, or import project your self</ErrorText>
+    </PropertyGroup>
+	
+##{
+	for(i in gmp.nuget){
+		var pack = gmp.nuget[i];
+		var arr = pack.split(" ");
+		var id = arr[0];
+		var version = arr[1];
+		var proppath = "$(SolutionDir)\\packages\\"+id+"."+version+"\\build\\native\\"+id+".props";
+		var targetpath = "$(SolutionDir)\\packages\\"+id+"."+version+"\\build\\native\\"+id+".targets";
+		
+		out +=  `    <Error Condition="!Exists('${targetpath}')" Text="$([System.String]::Format('$(ErrorText)', '${id}'))" />\n`;
+    
+	}
+}##	
+  </Target>  
 </Project>
