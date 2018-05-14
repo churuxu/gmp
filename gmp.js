@@ -41,6 +41,12 @@ process.argv.forEach((val, index, array) => {
     if(index == 3)tag = val;
 });
 
+if(tag.length == 0){
+	if(tag.indexOf("vs20")){
+		tag = "win32";
+	}
+}
+
 //load utility functions
 const util = require(gmpdir + '/util.js');
 
@@ -261,6 +267,29 @@ function processDir(dir, to){
 	});
 }
 
+
+function hashCode(str){
+    var hash = 0;
+    if (str.length == 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        hash = ((hash<<5)-hash) + ch;
+        hash = hash & hash; 
+    }
+    return hash;
+}
+
+function execCommand(cmd, cwd){		
+	var opt = {};
+	if(cwd){	
+		opt.cwd = cwd;
+	}
+	opt.stdio = "inherit";	
+	console.log(cmd);
+	child_process.execSync(cmd, opt);
+	
+}
+
 function processDepends(){
 	if(!gmp.depends){
 		return ;
@@ -268,26 +297,56 @@ function processDepends(){
 	
 	for(var i=0;i<gmp.depends.length;i++){
 		var dependdir = gmp.depends[i];
-		var cmd = "gmp " + template + " " + tag;		
-		var opt = {};
-		opt.cwd = dependdir;
-		opt.stdio = "inherit";
-		
-		console.log("generate depends " + dependdir + " ...");
-		child_process.execSync(cmd, opt);
+		var cmd = "gmp " + template + " " + tag;
+		execCommand(cmd, dependdir);
 	}
 }
 
+//下载文件
+function processDownload(){
+	if(gmp.download){
+		var statusfile = ".gmp.status";
+		var status = {};
+		try{
+			status = JSON.parse(fs.readFileSync(statusfile));
+		}catch(e){}
+		if(status.downloaded != gmp.download){
+			//上次下载的不一样，则重新下载
+			var url = gmp.download;		
+			var cmd = `curl -fsSL -o temp.zip ${url}`;
+			execCommand(cmd);
+			status.downloaded = gmp.download;
+			fs.writeFileSync(statusfile, JSON.stringify(status));			
+		}
+		if(status.unpacked != gmp.download){
+			var cmd = `unzip -o temp.zip`;
+			execCommand(cmd);
+			status.unpacked = gmp.download;
+			fs.writeFileSync(statusfile, JSON.stringify(status));
+			return 1000;
+		}
+	}
+	return 0;
+}
+
+
+processDownload();
 
 evalConfigs();
 var templateto = path.basename(template);
 var templatedir = path.join(gmpdir, "template", template);
 if(templateto != template && fs.existsSync(template))templatedir = template;
 
+
+
 processDepends();
 
 console.log(templatedir);
 console.log(gmp);
+
+
 processDir(templatedir, templateto);
+
+
 
 
