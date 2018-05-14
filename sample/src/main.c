@@ -2,6 +2,8 @@
 #include "bar.h"
 #include <stdio.h>
 #include "libtest.h"
+#include "uv.h"
+
 int main(){
 	printf("main start\n");
 	foo();

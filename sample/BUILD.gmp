@@ -1,9 +1,10 @@
 {
+
 "target":"test",
 "srcdirs":["src"],
 "includes":["src/foo","src/bar","lib"],
 "defines":["COMMOM_DEF"],
-"depends":["lib"],
+"depends":["lib","libuv"],
 "win32":{
     "defines":["WIN32_DEF"]
 },

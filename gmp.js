@@ -74,7 +74,9 @@ function evalScriptValue(jscode){
     return out;
 }
 
-
+//将一个对象的key-value合并到另一个对象
+//字符串合并方式: 替换
+//数组合并方式: 追加
 function mergerObject(toobj, fromobj){
     for(var key in fromobj){        
         if(toobj[key] instanceof Array){
@@ -296,9 +298,23 @@ function processDepends(){
 	}
 	
 	for(var i=0;i<gmp.depends.length;i++){
+		//生成依赖文件
 		var dependdir = gmp.depends[i];
 		var cmd = "gmp " + template + " " + tag;
 		execCommand(cmd, dependdir);
+		
+		//依赖文件的include合并到当前文件中		
+		var dependfile = dependdir + "/" + buildfile;
+		if(fs.existsSync(dependfile)){
+			var dependgmpdata = fs.readFileSync(dependfile);
+			var dependgmp = JSON.parse(dependgmpdata);
+			if(dependgmp.exports && dependgmp.exports.includes){
+				for(var j =0;j<dependgmp.exports.includes.length;j++){
+					var include = dependgmp.exports.includes[j];
+					gmp.includes.push(dependdir + "/" + include);
+				}
+			}
+		}		
 	}
 }
 

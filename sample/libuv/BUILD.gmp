@@ -1,0 +1,19 @@
+{
+"download":"https://github.com/libuv/libuv/archive/v1.20.3.zip",
+"target":"libuv",
+"type":"static",
+"srcdirs":["libuv-1.20.3/src"],
+"includes":["libuv-1.20.3/include","libuv-1.20.3/src"],
+"unix":{
+	"exludes":["/win"]
+},
+"win32":{
+	"exludes":["/unix"]	
+},
+"defines":["_CRT_SECURE_NO_WARNINGS"],
+
+"exports":{
+	"includes":["libuv-1.20.3/include"]	
+}
+}
+
