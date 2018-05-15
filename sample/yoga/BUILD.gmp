@@ -1,0 +1,14 @@
+{
+"download":"http://github.com/facebook/yoga/archive/v1.8.0.zip",
+"target":"yoga",
+"type":"static",
+"srcdirs":["yoga-1.8.0/yoga"],
+"includes":["yoga-1.8.0/yoga"],
+
+"defines":["_CRT_SECURE_NO_WARNINGS"],
+
+"exports":{
+	"includes":["yoga-1.8.0/yoga"]	
+}
+}
+

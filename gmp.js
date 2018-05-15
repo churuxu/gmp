@@ -326,16 +326,17 @@ function processDownload(){
 		try{
 			status = JSON.parse(fs.readFileSync(statusfile));
 		}catch(e){}
+		var filename = path.basename(gmp.download);
 		if(status.downloaded != gmp.download){
 			//上次下载的不一样，则重新下载
 			var url = gmp.download;		
-			var cmd = `curl -fsSL -o temp.zip ${url}`;
+			var cmd = `curl -fsSL -o "${filename}" ${url}`;
 			execCommand(cmd);
 			status.downloaded = gmp.download;
 			fs.writeFileSync(statusfile, JSON.stringify(status));			
 		}
 		if(status.unpacked != gmp.download){
-			var cmd = `unzip -o temp.zip`;
+			var cmd = `unzip -o "${filename}"`;
 			execCommand(cmd);
 			status.unpacked = gmp.download;
 			fs.writeFileSync(statusfile, JSON.stringify(status));
