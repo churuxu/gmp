@@ -132,14 +132,20 @@ for(i in gmp.includes){
     }##$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>    
   </PropertyGroup> 
 
-  <PropertyGroup >
+  <PropertyGroup Condition="'$(Platform)'=='Win32'">
     <LibraryPath>##{
 for(i in gmp.libdirs){
     out += "../" + gmp.libdirs[i] + ';';
 }     
     }##;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
   </PropertyGroup>
-  
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <LibraryPath>##{
+for(i in gmp.libdirs){
+    out += "../" + gmp.libdirs[i] + ';';
+}     
+    }##;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+  </PropertyGroup>  
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
 ##{	
