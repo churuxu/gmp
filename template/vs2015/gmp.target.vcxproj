@@ -127,7 +127,12 @@ gmp.unused = "";
     <LinkIncremental>false</LinkIncremental>   
     <IncludePath>##{
 for(i in gmp.includes){
-    out += "../" + gmp.includes[i] + ';';
+	var inc = gmp.includes[i];
+	if(inc.charAt(0) == '$' || inc.charAt(1) == ':'){
+		out += (inc + ';');
+	}else{
+		out += ("../" + inc + ';');
+	}
 }     
     }##$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>    
   </PropertyGroup> 
