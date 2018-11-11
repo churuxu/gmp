@@ -1,0 +1,72 @@
+cc = gcc
+cxx = g++
+ar = ar
+
+root = ..
+builddir = build
+
+cflags = ##{
+for(i in gmp.cflags){    
+	out = out + " " + gmp.cflags[i];	
+}
+}## ##{
+for(i in gmp.includes){    
+	out = out + " -I../" + gmp.includes[i];	
+}
+}##  ##{
+for(i in gmp.defines){    
+	out = out + " -D" + gmp.defines[i];	
+}
+}## 
+
+ldflags = -L$builddir ##{
+for(i in gmp.ldflags){    
+	out = out + " " + gmp.ldflags[i];	
+}
+}## 
+
+rule cc
+  command = $cc -MMD -MT $out -MF $out.d $cflags -c $in -o $out
+  description = CC $out
+  depfile = $out.d
+  deps = gcc
+
+rule cxx
+  command = $cxx -MMD -MT $out -MF $out.d $cflags -c $in -o $out
+  description = CXX $out
+  depfile = $out.d
+  deps = gcc
+
+rule ar
+  command = $ar crs $out $in
+  description = AR $out
+
+rule link
+  command = $cxx $ldflags -o $out $in $libs
+  description = LINK $out
+
+
+##{
+var objfiles = "";
+for(i in gmp.srcs){
+    var src = "$root/" + gmp.srcs[i];
+	var obj = "$builddir/" + path.basename(src) + ".o";	
+    if(path.extname(src) == ".c"){
+	    out = out + `build ${obj}: cc ${src}\n`;	
+	}else{
+	    out = out + `build ${obj}: cxx ${src}\n`;	
+	} 
+    objfiles = objfiles + " " +  obj	
+}
+
+if(gmp.type == "shared"){
+    out = out + `build ${gmp.target}: link ${objfiles}\n`;	
+}else if(gmp.type == "static"){
+    out = out + `build ${gmp.target}: ar ${objfiles}\n`;
+}else{  
+    out = out + `build ${gmp.target}: link ${objfiles}\n`;
+}
+}##   
+  
+  
+  
