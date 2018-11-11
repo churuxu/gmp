@@ -2,26 +2,26 @@ cc = gcc
 cxx = g++
 ar = ar
 
-root = ..
+root = ##{gmp.base}##
 builddir = build
 
 cflags = ##{
 for(i in gmp.cflags){    
-	out = out + " " + gmp.cflags[i];	
+    out = out + " " + gmp.cflags[i];    
 }
 }## ##{
 for(i in gmp.includes){    
-	out = out + " -I../" + gmp.includes[i];	
+    out = out + " -I${root}/" + gmp.includes[i]; 
 }
 }##  ##{
 for(i in gmp.defines){    
-	out = out + " -D" + gmp.defines[i];	
+    out = out + " -D" + gmp.defines[i]; 
 }
 }## 
 
 ldflags = -L$builddir ##{
 for(i in gmp.ldflags){    
-	out = out + " " + gmp.ldflags[i];	
+    out = out + " " + gmp.ldflags[i];   
 }
 }## 
 
@@ -45,28 +45,47 @@ rule link
   command = $cxx $ldflags -o $out $in $libs
   description = LINK $out
 
-
+rule ninja
+  command = ninja -C $in 
+  description = ninja $out
+  
 ##{
 var objfiles = "";
 for(i in gmp.srcs){
     var src = "$root/" + gmp.srcs[i];
-	var obj = "$builddir/" + path.basename(src) + ".o";	
+    var obj = "$builddir/" + path.basename(src) + ".o"; 
     if(path.extname(src) == ".c"){
-	    out = out + `build ${obj}: cc ${src}\n`;	
-	}else{
-	    out = out + `build ${obj}: cxx ${src}\n`;	
-	} 
-    objfiles = objfiles + " " +  obj	
+        out = out + `build ${obj}: cc ${src}\n`;    
+    }else{
+        out = out + `build ${obj}: cxx ${src}\n`;   
+    } 
+    objfiles = objfiles + " " + obj;  
 }
 
 if(gmp.type == "shared"){
-    out = out + `build ${gmp.target}: link ${objfiles}\n`;	
+    out = out + `build ${gmp.target}: link ${objfiles}\n`;  
 }else if(gmp.type == "static"){
     out = out + `build ${gmp.target}: ar ${objfiles}\n`;
 }else{  
     out = out + `build ${gmp.target}: link ${objfiles}\n`;
 }
-}##   
+out += "    libs = ";
+for(i in gmp.libs){
+    out = out +" -l"+ gmp.libs[i];
+} 
+for(i in gmp.depends){
+    var depend = gmp.depends[i];
+    var name = getTargetName(depend);
+    out = out +" -l"+ name;
+} 
+out += "\n\n";
+for(i in gmp.depends){
+    var depend = gmp.depends[i];
+    var name = getTargetName(depend);
+    //out += `build ${name}: ninja ${gmp.base}/${depend}\n`;
+	out += ("subninja ${root}/" + depend + "/ninja/build.ninja\n");
+} 
+}## 
   
   
   
