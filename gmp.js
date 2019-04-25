@@ -185,6 +185,18 @@ function evalConfigs(){
             pushFilesToArray(gmp.headers, gmp.srcdirs[i], gmp.headerext,  null);
         }
     }
+	
+	if(!gmp.includes || gmp.includes == "*"){
+		var incdirs = {};
+		gmp.includes = new Array();
+		for(var i=0;i<gmp.headers.length;i++){
+			var incdir = path.posix.dirname(gmp.headers[i]);
+			incdirs[incdir] = 1;
+		}
+		for(var d in incdirs){
+			gmp.includes.push(d);
+		}
+	}	
     
 
     if(gmp.exludes){ 
