@@ -201,6 +201,7 @@ function evalConfigs(){
 
     if(gmp.exludes){ 
         exludeByNameFromArray(gmp.srcs, gmp.exludes);
+		exludeByNameFromArray(gmp.headers, gmp.exludes);
     }
 	
 	if(gmp.precompile){

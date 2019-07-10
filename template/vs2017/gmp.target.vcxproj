@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 ##{
 	for(i in gmp.nuget){
 		var pack = gmp.nuget[i];
@@ -39,7 +39,7 @@ for(i in gmp.depends){
 	var depend = gmp.depends[i];
 	var name = getTargetName(depend);
 	var guid = util.guid(name);
-    out += '    <ProjectReference Include="../'+ depend +'/vs2015/'+ name +'.vcxproj">\n';
+    out += '    <ProjectReference Include="../'+ depend +'/vs2017/'+ name +'.vcxproj">\n';
 	out += '      <Project>'+guid+'</Project>\n';
 	out += '    </ProjectReference>\n';
 } 
@@ -83,7 +83,7 @@ for(i in gmp.headers){
     <ProjectGuid>##{gmp.guid}##</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>##{gmp.target}##</RootNamespace>
-	<WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+	<WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 ##{ 
@@ -100,7 +100,7 @@ gmp.unused = "";
     <ConfigurationType>##{gmp.vstype}##</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-	<PlatformToolset>v140</PlatformToolset>
+	<PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
@@ -108,7 +108,7 @@ gmp.unused = "";
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-	<PlatformToolset>v140</PlatformToolset>
+	<PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>  
  
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -129,12 +129,12 @@ gmp.unused = "";
   <PropertyGroup Label="UserMacros" />
   
   <PropertyGroup >
-    <LinkIncremental>false</LinkIncremental> 
+    <LinkIncremental>false</LinkIncremental>
 	##{
 if(gmp.nomanifest){
 	out += "      <EmbedManifest>false</EmbedManifest>\n";
 }	
-	}##	
+	}##
     <IncludePath>##{
 for(i in gmp.includes){
 	var inc = gmp.includes[i];
