@@ -57,10 +57,15 @@ if(gmp.rcfile){
 for(i in gmp.srcs){
 	var file = gmp.srcs[i];
 	var name = path.basename(file);
+	var ext = path.extname(file);
 	if(name == "stdafx.cpp" || name == "pch.cpp"){
 		out += '    <ClCompile Include=\"../' + gmp.srcs[i] + '\" >\n';
 		out += '       <PrecompiledHeader >Create</PrecompiledHeader>\n';
       	out += '    </ClCompile>\n';
+	}else if(gmp.precompile && (ext == ".c" || (gmp.noprecompile && gmp.noprecompile.indexOf(name)>=0))){
+		out += '    <ClCompile Include=\"../' + gmp.srcs[i] + '\" >\n';
+		out += '       <PrecompiledHeader >NotUsing</PrecompiledHeader>\n';
+      	out += '    </ClCompile>\n';		
 	}else{
 		out += '    <ClCompile Include=\"../' + gmp.srcs[i] + '\" />\n';
 	}
@@ -124,7 +129,12 @@ gmp.unused = "";
   <PropertyGroup Label="UserMacros" />
   
   <PropertyGroup >
-    <LinkIncremental>false</LinkIncremental>   
+    <LinkIncremental>false</LinkIncremental> 
+	##{
+if(gmp.nomanifest){
+	out += "      <EmbedManifest>false</EmbedManifest>\n";
+}	
+	}##	
     <IncludePath>##{
 for(i in gmp.includes){
 	var inc = gmp.includes[i];
