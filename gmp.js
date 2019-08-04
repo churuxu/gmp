@@ -24,7 +24,7 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const child_process = require('child_process');
-
+const os = require('os');
 
 const buildfile = "BUILD.gmp";
 const sign1 = "##{";
@@ -185,15 +185,32 @@ function evalConfigs(){
             pushFilesToArray(gmp.headers, gmp.srcdirs[i], gmp.headerext,  null);
         }
     }
+	
+	if(!gmp.includes || gmp.includes == "*"){
+		var incdirs = {};
+		gmp.includes = new Array();
+		for(var i=0;i<gmp.headers.length;i++){
+			var incdir = path.posix.dirname(gmp.headers[i]);
+			incdirs[incdir] = 1;
+		}
+		for(var d in incdirs){
+			gmp.includes.push(d);
+		}
+	}	
     
 
     if(gmp.exludes){ 
         exludeByNameFromArray(gmp.srcs, gmp.exludes);
+		exludeByNameFromArray(gmp.headers, gmp.exludes);
     }
 	
 	if(gmp.precompile){
 		if(!gmp.defines)gmp.defines = new Array();
 		gmp.defines.push('PRECOMPILE_HEADER="' + gmp.precompile+'"');
+	}
+	
+	if (os.platform() == "win32"){
+		gmp.sdkver = util.getWindowSDKVesion();
 	}
 }
 
