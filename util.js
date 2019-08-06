@@ -22,7 +22,8 @@
 
 const crypto = require('crypto');
 const path = require('path').posix;
-
+const cp = require('child_process');
+const os = require('os');
 
 function uuid(seed){
     const hash = crypto.createHash('md5');
@@ -87,6 +88,21 @@ function xcfileref(srcs){
 }
 
 
+function getWindowSDKVesion(){
+	if (os.platform() != "win32") return "";
+	var cmd = "cmd /c " + __dirname + "/findwinsdk.bat -v";
+	try{
+		var out = cp.execSync(cmd);
+		var str = out.toString();		
+		if(str.indexOf("10.") == 0){
+			var r = str.indexOf("\r");
+			if(r > 0)str = str.substr(0, r);			
+			return str;
+		}
+	}catch(e){		
+	}
+	return "";
+}
 
 
 var mod = {
@@ -96,7 +112,8 @@ var mod = {
     xcrefid:xcrefid,
     xctype:xctype,
     xcbuildfile:xcbuildfile,
-    xcfileref:xcfileref
+    xcfileref:xcfileref,
+	getWindowSDKVesion:getWindowSDKVesion
 }
 module.exports = mod;
 

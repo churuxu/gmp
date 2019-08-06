@@ -24,7 +24,7 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const child_process = require('child_process');
-
+const os = require('os');
 
 const buildfile = "BUILD.gmp";
 const sign1 = "##{";
@@ -207,6 +207,10 @@ function evalConfigs(){
 	if(gmp.precompile){
 		if(!gmp.defines)gmp.defines = new Array();
 		gmp.defines.push('PRECOMPILE_HEADER="' + gmp.precompile+'"');
+	}
+	
+	if (os.platform() == "win32"){
+		gmp.sdkver = util.getWindowSDKVesion();
 	}
 }
 
