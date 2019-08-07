@@ -34,11 +34,15 @@ var template = ""
 var verbose = false;
 var gmpdir = "";
 var tag = "";
+var opt = "";
+
+
 // process command line
 process.argv.forEach((val, index, array) => {    
     if(index == 1)gmpdir = path.dirname(val);
     if(index == 2)template = val;
     if(index == 3)tag = val;
+	if(index == 4)opt = val;
 });
 
 if(tag.length == 0){
@@ -313,25 +317,47 @@ function processDepends(){
 	if(!gmp.depends){
 		return ;
 	}
+	//if(opt == "nodeps"){
+	//	return ;
+	//}
+	
+	var deps = {};
 	
 	for(var i=0;i<gmp.depends.length;i++){
-		//生成依赖文件
-		var dependdir = gmp.depends[i];
-		var cmd = "gmp " + template + " " + tag;
-		execCommand(cmd, dependdir);
 		
-		//依赖文件的include合并到当前文件中		
+		var dependdir = gmp.depends[i];
+		//var cmd = "gmp " + template + " " + tag;
+		//execCommand(cmd, dependdir);
+		deps[dependdir] = true;
+			
 		var dependfile = dependdir + "/" + buildfile;
 		if(fs.existsSync(dependfile)){
 			var dependgmpdata = fs.readFileSync(dependfile);
 			var dependgmp = JSON.parse(dependgmpdata);
+			//依赖文件的exports.include合并到当前文件中	
 			if(dependgmp.exports && dependgmp.exports.includes){
 				for(var j =0;j<dependgmp.exports.includes.length;j++){
 					var include = dependgmp.exports.includes[j];
 					gmp.includes.push(dependdir + "/" + include);
 				}
 			}
+			//依赖文件的depends合并到当前文件中	
+			if(dependgmp.depends && dependgmp.depends.length){
+				for(var j =0;j<dependgmp.depends.length;j++){
+					var dep = dependgmp.depends[j];
+					var p = path.posix.join(dependdir, dep);
+					deps[p] = true;					
+				}
+			}			
 		}		
+	}
+	
+	//生成依赖的文件
+	if(opt == "nodep")return;
+	for(var dir in deps){
+		var cmd = "gmp " + template + " " + tag + " nodep";		
+		console.log("depends:" + dir);
+		execCommand(cmd, dir);       	
 	}
 }
 
